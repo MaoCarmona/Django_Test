@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    shm_size: 1gb
+    environment:
+      POSTGRES_DB: default
+      POSTGRES_USER: defaultuser
+      POSTGRES_PASSWORD: defaultuser123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  djangoapp:
+    container_name: djangotest
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - PG_USER=defaultuser
+      - PG_PASSWORD=defaultuser123
+      - PG_DB=default
+      - PG_PORT=5432
+      - PG_HOST=postgres
+      - PYTHONBUFFERED=1
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
